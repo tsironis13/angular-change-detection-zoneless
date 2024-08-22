@@ -1,0 +1,250 @@
+$collapse-button-size: 15px;
+
+:host {
+  position: relative; // anchor
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.25rem;
+
+  margin: 10px;
+  text-align: center;
+  min-width: $collapse-button-size;
+  min-height: $collapse-button-size;
+  border: 1px solid var(--quinary-contrast);
+
+  &:hover {
+    &::before {
+      content: "";
+      inset: -1px;
+      position: absolute;
+      background: transparent;
+      border-radius: 0.25rem;
+      z-index: 0;
+      background: var(--red-to-pink-to-purple-horizontal-gradient);
+    }
+  }
+
+  &.dirty-check {
+    &.level-1 {
+      & div,
+      & header {
+        background-color: #e6e6ff;
+      }
+    }
+    &.level-2 {
+      & div,
+      & header {
+        background-color: #ccccff;
+      }
+    }
+    &.level-3 {
+      & div,
+      & header {
+        background-color: #b3b3ff;
+      }
+    }
+    &.level-4 {
+      & header,
+      & div {
+        background-color: #9999ff;
+      }
+    }
+    &.level-5 div {
+      background-color: #8080ff;
+    }
+  }
+
+  > div.component::before {
+    position: relative;
+    top: -10px;
+    font-family: monospace;
+    font-size: 10px;
+  }
+
+  > div.component {
+    flex: 1;
+    background-color: var(--septenary-contrast);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 0 0 0.25rem 0.25rem;
+
+    .cd-state-box {
+      border-color: #004d1a;
+      color: #004d1a;
+      background-color: #b3ffcc;
+      &::before {
+        content: "attached";
+      }
+
+      &.cd-detached {
+        color: #000000;
+        background-color: #cccccc;
+        border-color: #000000;
+        &::before {
+          content: "detached";
+        }
+      }
+    }
+
+    .ng-on-changes-box {
+      text-align: center;
+      border-color: darkgray;
+      color: darkgray;
+
+      &.ng-on-changes {
+        border-color: red;
+        color: red;
+        background-color: #ffe6e6;
+      }
+    }
+
+    > div.name {
+      padding: 5px 0;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    table.input-box {
+      font-size: 11px;
+
+      td,
+      th {
+        padding: 2px 3px;
+      }
+      th {
+        text-align: right;
+      }
+      td:not([colspan]) {
+        text-align: left;
+      }
+    }
+
+    div.children {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.7rem 0.5rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    border-bottom: 1px solid var(--senary-contrast);
+    background-color: var(--octonary-contrast);
+    position: relative;
+    z-index: 10;
+    transition: border 0.3s ease;
+
+    h3 {
+      display: inline-block;
+      font-family: var(--code-font);
+      font-size: 1rem;
+      letter-spacing: -0.025rem;
+      margin: 0;
+    }
+
+    code,
+    span {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.tag {
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+span.strategy-box {
+  border-color: black;
+  color: white;
+
+  &.Default {
+    border-color: black;
+    background-color: black;
+    color: white;
+  }
+
+  &.OnPush {
+    border-color: deeppink;
+    background-color: deeppink;
+    color: white;
+  }
+}
+
+.dirty,
+.RefreshView,
+.Consumer-dirty {
+  background-color: #ffcccc;
+  border-color: #ff0000;
+}
+
+.HasChildViewsToRefresh {
+  background-color: #e6e6ff;
+  border-color: #0000ff;
+}
+
+.action-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 138px;
+  margin-top: 4px;
+
+  .tag {
+    font-size: 11px;
+    &:not(:last-child) {
+      margin-right: 4px;
+    }
+  }
+}
+
+.action {
+  display: flex;
+  justify-content: center;
+  button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+select {
+  min-width: 0;
+
+  margin-left: -1px;
+  margin-bottom: -1px;
+
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
+
+  &:not([disabled]) {
+    background: white;
+    border: 1px solid red;
+  }
+
+  option {
+    position: relative;
+    background-color: var(--quinary-contrast);
+  }
+}
+
+select + button {
+  margin-right: -1px;
+  margin-bottom: -1px;
+
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0;
+  &::before,
+  &::after {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}

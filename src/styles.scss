@@ -1,0 +1,185 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "./adev-colors.scss";
+
+body {
+  font-family: "Arial", sans-serif;
+  box-sizing: border-box;
+}
+
+app-comp-1 {
+  > div.component > div.children {
+    justify-content: center;
+  }
+  width: calc(100% - 40px);
+}
+
+button.emphasize {
+  background-color: #ddffcc;
+  border-color: #226600;
+  color: #226600;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--senary-contrast);
+  border-radius: 0.25rem;
+  position: relative;
+  transition: border 0.3s ease;
+
+  &::before {
+    content: "";
+    inset: -1px;
+    position: absolute;
+    background: transparent;
+    border-radius: 0.25rem;
+    z-index: 0;
+  }
+
+  box-shadow: 10px 4px 40px 0 rgba(0, 0, 0, 0.01);
+
+  &:hover {
+    &::before {
+      background: var(--red-to-pink-to-purple-horizontal-gradient);
+    }
+  }
+
+  &:has(nav, h3, article, ul) {
+    header {
+      flex: 1;
+      border-radius: 0.25rem 0.25rem 0 0;
+      border-bottom: 1px solid var(--senary-contrast);
+    }
+  }
+
+  header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.7rem 1rem;
+    border-radius: 0.25rem;
+    background-color: var(--octonary-contrast);
+    position: relative;
+    z-index: 10;
+    transition: border 0.3s ease;
+
+    h3 {
+      display: inline-block;
+      font-family: var(--code-font);
+      font-size: 1rem;
+      letter-spacing: -0.025rem;
+      margin: 0;
+    }
+
+    code,
+    span {
+      font-size: 0.875rem;
+    }
+  }
+
+  > nav,
+  > article,
+  > ul {
+    position: relative;
+    background: var(--septenary-contrast);
+    border-radius: 0 0 0.25rem 0.25rem;
+    border-bottom: 1px solid var(--senary-contrast);
+  }
+
+  > ul {
+    margin: 0;
+    padding: 1em;
+    padding-inline-start: 40px;
+  }
+
+  > p {
+    padding-inline: 1.25rem;
+    margin-block-end: 0;
+  }
+}
+
+button,
+select {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: relative;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  width: max-content;
+  /* color: transparent; */
+
+  // border gradient / background
+  --angle: 90deg;
+  background: linear-gradient(
+    var(--angle),
+    var(--orange-red) 0%,
+    var(--vivid-pink) 50%,
+    var(--electric-violet) 100%
+  );
+
+  // text & radial gradient
+  &::before {
+    content: attr(text);
+    position: absolute;
+    inset: 1px;
+    background: var(--page-bg-radial-gradient);
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      opacity 0.3s ease,
+      background 0.3s ease;
+    color: var(--primary-contrast);
+  }
+
+  // solid color negative space - CSS transition supported
+  &::after {
+    content: attr(text);
+    position: absolute;
+    inset: 1px;
+    background: var(--page-background);
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      opacity 0.3s ease,
+      background 0.3s ease;
+    color: var(--primary-contrast);
+  }
+
+  &:hover:not([disabled]) {
+    &::before {
+      background-color: var(--page-background);
+      background: var(--soft-pink-radial-gradient);
+      opacity: 0.9;
+    }
+    &::after {
+      opacity: 0;
+    }
+  }
+
+  &:active {
+    &::before {
+      opacity: 0.8;
+    }
+  }
+
+  &:disabled {
+    //gradient stroke
+    opacity: 0.7;
+    background: var(--quinary-contrast);
+    color: var(--primary-contrast);
+
+    &::before {
+      background-color: var(--page-background);
+      background: var(--page-bg-radial-gradient);
+    }
+    &::after {
+      background: var(--quinary-contrast);
+    }
+  }
+}
