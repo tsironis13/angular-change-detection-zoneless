@@ -1,0 +1,22 @@
+[NX Daemon Server] - 2024-08-22T15:03:25.289Z - Started listening on: \\.\pipe\nx\C:\Users\IOANNI~1\AppData\Local\Temp\c5074c6711ba3755ab88\d.sock
+[NX Daemon Server] - 2024-08-22T15:03:25.293Z - [WATCHER]: Subscribed to changes within: c:\Users\IoannisTsironis\Documents\Web Development\angular\angular-change-detection-zoneless (native)
+[NX Daemon Server] - 2024-08-22T15:03:25.299Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-22T15:03:25.301Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-08-22T15:03:25.301Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-22T15:03:25.305Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX Daemon Server] - 2024-08-22T15:03:25.306Z - Done responding to the client Shutdown initiated
+[NX Daemon Server] - 2024-08-22T15:03:25.306Z - Handled FORCE_SHUTDOWN. Handling time: 1. Response time: 1.
+[NX Daemon Server] - 2024-08-22T15:03:25.307Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-08-22T15:03:25.307Z - [WATCHER]: Stopping the watcher for c:\Users\IoannisTsironis\Documents\Web Development\angular\angular-change-detection-zoneless (sources)
+[NX Daemon Server] - 2024-08-22T15:03:25.307Z - [WATCHER]: Stopping the watcher for c:\Users\IoannisTsironis\Documents\Web Development\angular\angular-change-detection-zoneless (outputs)
+[NX Daemon Server] - 2024-08-23T14:26:47.454Z - Started listening on: \\.\pipe\nx\C:\Users\IOANNI~1\AppData\Local\Temp\c5074c6711ba3755ab88\d.sock
+[NX Daemon Server] - 2024-08-23T14:26:47.461Z - [WATCHER]: Subscribed to changes within: c:\Users\IoannisTsironis\Documents\Web Development\angular\angular-change-detection-zoneless (native)
+[NX Daemon Server] - 2024-08-23T14:26:47.463Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-23T14:26:47.465Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-23T14:26:47.467Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-23T14:26:47.470Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX Daemon Server] - 2024-08-23T14:26:47.472Z - Done responding to the client Shutdown initiated
+[NX Daemon Server] - 2024-08-23T14:26:47.472Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 2.
+[NX Daemon Server] - 2024-08-23T14:26:47.472Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-08-23T14:26:47.473Z - [WATCHER]: Stopping the watcher for c:\Users\IoannisTsironis\Documents\Web Development\angular\angular-change-detection-zoneless (sources)
+[NX Daemon Server] - 2024-08-23T14:26:47.473Z - [WATCHER]: Stopping the watcher for c:\Users\IoannisTsironis\Documents\Web Development\angular\angular-change-detection-zoneless (outputs)

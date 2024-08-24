@@ -3,20 +3,23 @@
   <section class="card">
     <header><h3>Trigger global actions</h3></header>
     <nav>
-      <button #apptick_button (click.outside)="onTick()" text="AppRef.tick()">AppRef.tick()</button>
-      <button
-        #timeout_button
-        (click.outside)="onTimeout()"
-        text="setTimeout(...)"
-        title="Installs a timeout to run in 3s (in ng-zone)"
-      >
+      <button #apptick_button (click)="onTick()" text="AppRef.tick()">AppRef.tick()</button>
+      <button #timeout_button (click)="onTimeout()" text="setTimeout(...)" title="Installs a timeout to run in 3s">
         setTimeout(...)
+      </button>
+      <button
+        #interval_button
+        (click)="onInterval()"
+        text="setInterval(...)"
+        title="Installs an interval to run twice every 4s"
+      >
+        setInterval(...)
       </button>
       <button #click_button (click)="clickNoop()" title="Click with a NoOp" text="Click">Click</button>
     </nav>
   </section>
 
-  <section class="card">
+  <!-- <section class="card">
     <header><h3>Control dirty check coloring</h3></header>
     <nav>
       <label>
@@ -26,14 +29,14 @@
       <span class="filler"></span>
       <button #clear (click.outside)="onClear()" text="Clear">Clear</button>
     </nav>
-  </section>
+  </section> -->
 
   <section class="card">
     <header>
       <h3>Play with component input - current value: <span #input_value_field>n/a</span></h3>
     </header>
     <nav>
-      <button #trigger_change (click.outside)="onChange()" text="Trigger change">Trigger change</button>
+      <button #trigger_change (click)="onChange()" text="Trigger change">Trigger change</button>
 
       <label
         ><input
@@ -42,6 +45,14 @@
           checked
           title="Provides the new value as an input signal"
         />change input signal</label
+      >
+      <label
+        ><input
+          type="checkbox"
+          #propagate_by_input_signal_checkbox_after_timeout
+          checked
+          title="Provides the new value as an input signal after a timeout of 3secs"
+        />change input signal after timeout</label
       >
       <label
         ><input
@@ -67,9 +78,13 @@
           title="Publishes the new value via Observable"
         />via Observable (no ref-change)</label
       >
-      <label><input type="checkbox" #propagate_in_zone_checkbox checked />Propagate in Angular zone</label>
     </nav>
   </section>
+</div>
+
+<div class="flex justify-center gap-5" style="height: 70px; margin: -12px 0 0">
+  <app-bell #cdBell />
+  <app-bell #renderBell bellType="render" />
 </div>
 
 <div class="cd-warning" (click.outside)="onTick()">Remember to trigger <i>tick()</i> to fire CD</div>
@@ -83,9 +98,10 @@
   ></app-comp-1>
 
   <section class="card">
-    <header><h3>Change detection details</h3></header>
+    <header><h3>Zoneless Change detection details</h3></header>
     <article>
       <ul>
+        <li>setTimeout, setInterval will not fire a CD cycle</li>
         <li>
           Event listeners in templates (like click) will mark the ancestors as dirty. This is why OnPush parents still
           run change detection on click. (<a
@@ -93,8 +109,8 @@
             >See implementation</a
           >)
         </li>
-        <li>Mark for check won't fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
-        <li>Signal updates won't fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
+        <li>Mark for check will not fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
+        <li>Signal updates will not fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
         <li>Signal updates will mark the component as a dirty consummer & all ancestor as traversal</li>
       </ul>
     </article>

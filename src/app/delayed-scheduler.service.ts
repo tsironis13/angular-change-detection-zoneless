@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 
 export type Fn = () => void;
@@ -9,8 +9,6 @@ export class DelayedScheduler {
 
   private _queue: Fn[] = [];
   private _done$ = new Subject<void>();
-
-  constructor(private _zone: NgZone) {}
 
   public schedule(fn: Fn): void {
     this._queue.push(fn);
@@ -33,8 +31,6 @@ export class DelayedScheduler {
   }
 
   private scheduleInternal(millis: number): void {
-    this._zone.runOutsideAngular(() => {
-      setTimeout(this.onTick.bind(this), millis);
-    });
+    setTimeout(this.onTick.bind(this), millis);
   }
 }

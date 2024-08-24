@@ -1,6 +1,6 @@
-import {DOCUMENT} from '@angular/common';
-import {inject, Injectable} from '@angular/core';
-import {EventManagerPlugin} from '@angular/platform-browser';
+import { DOCUMENT } from "@angular/common";
+import { inject, Injectable } from "@angular/core";
+import { EventManagerPlugin } from "@angular/platform-browser";
 
 @Injectable()
 export class ZoneEventPlugin extends EventManagerPlugin {
@@ -8,16 +8,14 @@ export class ZoneEventPlugin extends EventManagerPlugin {
     super(inject(DOCUMENT));
   }
 
-  protected readonly modifier = '.outside';
+  protected readonly modifier = ".outside";
 
-  override addEventListener(
-      element: HTMLElement, eventName: string, handler: Function): Function {
+  override addEventListener(element: HTMLElement, eventName: string, handler: Function): Function {
+    console.log("Zone Event Plugin");
     return this.manager.getZone().runOutsideAngular(() => {
-      return this.manager.addEventListener(
-          element, this.unwrap(eventName), handler);
+      return this.manager.addEventListener(element, this.unwrap(eventName), handler);
     });
   }
-
 
   supports(event: string): boolean {
     return event.includes(this.modifier);
@@ -29,6 +27,9 @@ export class ZoneEventPlugin extends EventManagerPlugin {
   }
 
   protected unwrap(event: string): string {
-    return event.split('.').filter(v => !this.modifier.includes(v)).join('.');
+    return event
+      .split(".")
+      .filter((v) => !this.modifier.includes(v))
+      .join(".");
   }
 }

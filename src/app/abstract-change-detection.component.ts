@@ -10,7 +10,6 @@ import {
   Injectable,
   input,
   Input,
-  NgZone,
   OnChanges,
   signal,
   SimpleChanges,
@@ -58,7 +57,6 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private _colorService = inject(ColorService);
   private _dirtyCheckColoringService = inject(DirtyCheckColoringService);
   private _cd = inject(ChangeDetectorRef);
-  private _zone = inject(NgZone);
   private _warningService = inject(WarningService);
   private _stateService = inject(StateService);
   protected signal = signal(0);
@@ -81,55 +79,50 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   }
 
   public ngAfterViewInit(): void {
-    // install outside Angular zone to not trigger change detection
-    this._zone.runOutsideAngular(() => {
-      this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((busy) => {
-        console.log("Is Busy: " + busy);
-        this._actionSelect.nativeElement.disabled = busy;
-        this._executeButton.nativeElement.disabled = busy;
-        if (!busy) {
-          this._stateService.updateState(true);
+    this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((busy) => {
+      //console.log("Is Busy: " + busy);
+      this._actionSelect.nativeElement.disabled = busy;
+      this._executeButton.nativeElement.disabled = busy;
+      if (!busy) {
+        this._stateService.updateState(true);
+      }
+    });
+
+    // Signal change
+    fromEvent(this._executeButton.nativeElement, "click")
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap(() => this._dirtyCheckColoringService.clearColoring()),
+      )
+      .subscribe(() => {
+        const action = this._actionSelect.nativeElement.value;
+        switch (action) {
+          case "click":
+            // we click on the hidden button to trigger a
+            // template binding event
+            this._hiddenButton.nativeElement.click();
+            break;
+          case "detach":
+            this.onDetach();
+            break;
+          case "attach":
+            this.onAttach();
+            break;
+          case "dc":
+            this.onDetectChanges();
+            break;
+          case "mfc":
+            this.onMarkForCheck();
+            break;
+          case "signal":
+            this.onSignal();
+
+            break;
+        }
+        if (action != "click") {
+          this._stateService.updateState();
         }
       });
-
-      // Signal change
-      fromEvent(this._executeButton.nativeElement, "click")
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          tap(() => this._dirtyCheckColoringService.clearColoring()),
-        )
-        .subscribe(() => {
-          const action = this._actionSelect.nativeElement.value;
-          switch (action) {
-            case "click":
-              // we click on the hidden button to trigger a
-              // template binding event
-              this._hiddenButton.nativeElement.click();
-              break;
-            case "detach":
-              this.onDetach();
-              break;
-            case "attach":
-              this.onAttach();
-              break;
-            case "dc":
-              this.onDetectChanges();
-              break;
-            case "mfc":
-              this.onMarkForCheck();
-              break;
-            case "signal":
-              this._zone.run(() => {
-                this.onSignal();
-              });
-
-              break;
-          }
-          if (action != "click") {
-            this._stateService.updateState();
-          }
-        });
-    });
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -143,7 +136,6 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   }
 
   public get touch(): void {
-    console.log("touch");
     return this._colorService.colorDirtyCheck(this._hostRef);
   }
 
@@ -161,7 +153,6 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private onMarkForCheck(): void {
     console.log(`ChangeDetectorRef.markForCheck() for ${this.name}`);
     this._cd.markForCheck();
-    this._warningService.showWarning();
   }
 
   private onDetach(): void {
@@ -177,11 +168,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   }
 
   private onSignal(): void {
-    console.log(this.signal());
     this.signal.update((v) => v + 1);
-    //this.signal.set(10);
-    console.log(this.signal());
-    //this._warningService.showWarning();
   }
 
   private getCdStatus(cdRef: ChangeDetectorRef): CdStatus {

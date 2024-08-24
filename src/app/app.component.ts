@@ -1,6 +1,9 @@
 import {
+  afterRender,
+  AfterViewChecked,
   AfterViewInit,
   ApplicationRef,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   ElementRef,
@@ -8,6 +11,7 @@ import {
   NgZone,
   OnInit,
   signal,
+  viewChild,
   ViewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -18,15 +22,16 @@ import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
 import { NumberHolder } from "./number-holder";
 import { WarningService } from "./warning.service";
 import { Comp_1_Component } from "./comp-tree/comp-1.component";
+import { BellComponent } from "./bell/bell.component";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
   standalone: true,
-  imports: [Comp_1_Component],
+  imports: [Comp_1_Component, BellComponent],
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private destroyRef = inject(DestroyRef);
 
   private value = 0;
@@ -39,11 +44,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   @ViewChild("timeout_button", { static: true }) private _timeoutButton!: ElementRef;
 
+  @ViewChild("interval_button", { static: true }) private _intervalButton!: ElementRef;
+
   @ViewChild("click_button", { static: true }) private _clickButton!: ElementRef;
 
   @ViewChild("trigger_change", { static: true }) private _triggerChangeButton!: ElementRef;
 
-  @ViewChild("clear", { static: true }) private _clearButton!: ElementRef;
+  //@ViewChild("clear", { static: true }) private _clearButton!: ElementRef;
 
   @ViewChild("auto_clear", { static: true })
   private _autoClearCheckbox!: ElementRef<HTMLInputElement>;
@@ -66,17 +73,23 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild("propagate_by_observable_checkbox", { static: true })
   private _propagateByObservableCheckbox!: ElementRef<HTMLInputElement>;
 
-  @ViewChild("propagate_in_zone_checkbox", { static: true })
-  private _propagateInZoneCheckbox!: ElementRef<HTMLInputElement>;
-
   @ViewChild("qrcode_canvas", { static: true }) private _canvas!: ElementRef<HTMLCanvasElement>;
 
+  _propagateByInputSignalAfterTimeoutCheckbox = viewChild.required<ElementRef<HTMLInputElement>>(
+    "propagate_by_input_signal_checkbox_after_timeout",
+  );
+
+  cdBell = viewChild.required<BellComponent>("cdBell");
+  renderBell = viewChild.required<BellComponent>("renderBell");
+
   constructor(
-    private _zone: NgZone,
     private _appRef: ApplicationRef,
     private _dirtyCheckColoringService: DirtyCheckColoringService,
     private _warningService: WarningService,
-  ) {}
+    private _cdr: ChangeDetectorRef,
+  ) {
+    afterRender(() => this.renderBell().ring());
+  }
 
   ngOnInit(): void {
     var canvas = document.getElementById("canvas");
@@ -87,17 +100,29 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
+  ngAfterViewChecked(): void {
+    console.log("AppComponent_ngAfterViewChecked");
+    this.cdBell().ring();
+  }
+
   onTick() {
     this._dirtyCheckColoringService.clearColoring();
     this._appRef.tick();
+    this._cdr.markForCheck();
     this._warningService.hideWarning();
   }
 
   onTimeout() {
     setTimeout(() => {
       this._warningService.hideWarning();
-      this._zone.run(() => console.log(`setTimeout(...)`));
+      console.log(`setTimeout(...)`);
     }, 3000);
+  }
+
+  onInterval() {
+    const interval = setInterval(() => console.log("hello from interval"), 4000);
+
+    setTimeout(() => clearInterval(interval), 10000);
   }
 
   onClear() {
@@ -116,33 +141,31 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   onChange() {
     this._dirtyCheckColoringService.clearColoring();
-    if (this.isPropagateInZone()) {
-      this._zone.run(() => this.updateInputValue());
-    } else {
-      this.updateInputValue();
-    }
+    this.updateInputValue();
   }
 
   public ngAfterViewInit(): void {
-    this._dirtyCheckColoringService.setAutoClearColoring(this.isAutoClear());
+    //this._dirtyCheckColoringService.setAutoClearColoring(this.isAutoClear());
 
     // Busy
     this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((busy) => {
       this._apptickButton.nativeElement.disabled = busy;
       this._timeoutButton.nativeElement.disabled = busy;
+      this._intervalButton.nativeElement.disabled = busy;
       this._clickButton.nativeElement.disabled = busy;
-      this._autoClearCheckbox.nativeElement.disabled = busy;
+      //this._autoClearCheckbox.nativeElement.disabled = busy;
       this._triggerChangeButton.nativeElement.disabled = busy;
       this._propagateByValueCheckbox.nativeElement.disabled = busy;
       this._propagateByInputSignalCheckbox.nativeElement.disabled = busy;
+      this._propagateByInputSignalAfterTimeoutCheckbox().nativeElement.disabled = busy;
       this._propagateByRefCheckbox.nativeElement.disabled = busy;
       this._propagateByObservableCheckbox.nativeElement.disabled = busy;
-      this._propagateInZoneCheckbox.nativeElement.disabled = busy;
-      if (busy && !this._dirtyCheckColoringService.isAutoClearColoring) {
-        this._clearButton.nativeElement.classList.add("emphasize");
-      } else {
-        this._clearButton.nativeElement.classList.remove("emphasize");
-      }
+
+      // if (busy && !this._dirtyCheckColoringService.isAutoClearColoring) {
+      //   this._clearButton.nativeElement.classList.add("emphasize");
+      // } else {
+      //   this._clearButton.nativeElement.classList.remove("emphasize");
+      // }
     });
   }
 
@@ -153,6 +176,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     if (this.isPropagateByInputSignal()) {
       this.inputSignal.set(this.value);
+    }
+    if (this.isPropagateByInputSignalAfterTimeout()) {
+      setTimeout(() => this.inputSignal.set(this.value), 3000);
     }
     if (this.isPropagateByRef()) {
       this.inputByRef.value = this.value;
@@ -167,9 +193,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     valueElement.innerHTML = this.value.toString(10);
   }
 
-  private isAutoClear(): boolean {
-    return this._autoClearCheckbox.nativeElement.checked;
-  }
+  // private isAutoClear(): boolean {
+  //   return this._autoClearCheckbox.nativeElement.checked;
+  // }
 
   private isPropagateByValue(): boolean {
     return this._propagateByValueCheckbox.nativeElement.checked;
@@ -179,15 +205,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._propagateByInputSignalCheckbox.nativeElement.checked;
   }
 
+  private isPropagateByInputSignalAfterTimeout(): boolean {
+    return this._propagateByInputSignalAfterTimeoutCheckbox().nativeElement.checked;
+  }
+
   private isPropagateByRef(): boolean {
     return this._propagateByRefCheckbox.nativeElement.checked;
   }
 
   private isPropagateByObservable(): boolean {
     return this._propagateByObservableCheckbox.nativeElement.checked;
-  }
-
-  private isPropagateInZone(): boolean {
-    return this._propagateInZoneCheckbox.nativeElement.checked;
   }
 }
