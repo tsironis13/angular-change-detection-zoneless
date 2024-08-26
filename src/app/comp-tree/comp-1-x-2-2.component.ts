@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { AfterViewChecked, ChangeDetectionStrategy, Component } from "@angular/core";
 import { AbstractChangeDetectionComponent } from "../abstract-change-detection.component";
 import { template } from "../change-detection.component.template";
 import { ColorService } from "../color.service";
@@ -15,8 +15,12 @@ const CD_STRATEGY = ChangeDetectionStrategy.OnPush;
   changeDetection: CD_STRATEGY,
   standalone: true,
 })
-export class Comp_1_x_2_2_Component extends AbstractChangeDetectionComponent {
+export class Comp_1_x_2_2_Component extends AbstractChangeDetectionComponent implements AfterViewChecked {
   constructor() {
     super(NAME, LEVEL, CD_STRATEGY);
+  }
+
+  ngAfterViewChecked(): void {
+    console.log("Comp_1_x_2_2_Component_ngAfterViewChecked");
   }
 }

@@ -1,5 +1,5 @@
+<div class="bg-slate-700 text-white p-4">Angular v18 Zone Less Application</div>
 <div class="control">
-  <div>ZONE LESS</div>
   <section class="card">
     <header><h3>Trigger global actions</h3></header>
     <nav>
@@ -90,6 +90,34 @@
 <div class="cd-warning" (click.outside)="onTick()">Remember to trigger <i>tick()</i> to fire CD</div>
 
 <main>
+  <div class="grid px-6">
+    <div>Angular v18 Zoneless observations:</div>
+    <div class="py-2">
+      <ul class="list-disc">
+        <li>setTimeout and setInterval actions do not fire a CD cycle.</li>
+        <li>
+          Event listeners in templates (like click) will mark the ancestors as dirty. This is why OnPush parents still
+          run change detection on click. (<a
+            href="https://github.com/angular/angular/blob/7c8f026778b1486a4fc9cde21d8806e044618e89/packages/core/src/render3/instructions/listener.ts#L249"
+            >See implementation</a
+          >)
+        </li>
+        <li>Mark for check fires a CD cycle.</li>
+        <li>Signal updates will mark the component as a dirty consummer & all ancestor as traversal.</li>
+        <li>
+          Local change detection is performed when a signal is updated inside a component. (Try to increment
+          comp-1-x-2's signal)<br />
+          More optimized change detection mechanism performed in the absense of ng zones.
+        </li>
+      </ul>
+    </div>
+
+    <div class="pt-2">
+      Another interesting observation and optimization that comes with the absense of zones is that now when comp-1's
+      signal is updated after 3 seconds, the ngAfterViewChecked callback is not called (check its component bell) for
+      app-component and for comp-1 in contrast to zonefull applications.
+    </div>
+  </div>
   <app-comp-1
     [inputSignal]="inputSignal()"
     [inputByVal]="inputByVal"

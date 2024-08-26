@@ -28,7 +28,7 @@ import { WarningService } from "./warning.service";
 export abstract class AbstractChangeDetectionComponent implements AfterViewInit, OnChanges {
   private destroyRef = inject(DestroyRef);
   private _destroyInputObservable$ = new Subject<void>();
-  private cdRef = inject(ChangeDetectorRef);
+  cdRef = inject(ChangeDetectorRef);
 
   @ViewChild("execute_button", { static: true })
   private _executeButton!: ElementRef<HTMLButtonElement>;
@@ -52,6 +52,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
 
   public inputObservableValue!: number;
   public cdStrategyName: string;
+  public componentName: string;
 
   private _hostRef = inject(ElementRef);
   private _colorService = inject(ColorService);
@@ -60,6 +61,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private _warningService = inject(WarningService);
   private _stateService = inject(StateService);
   protected signal = signal(0);
+  protected prop = 0;
 
   constructor(
     public name: string,
@@ -67,6 +69,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
     cdStrategy: ChangeDetectionStrategy,
   ) {
     this.cdStrategyName = ChangeDetectionStrategy[cdStrategy];
+    this.componentName = name;
 
     this._stateService.state$.pipe(takeUntilDestroyed()).subscribe((force) => {
       const cdStatus = this.getCdStatus(this._cd);
@@ -116,7 +119,9 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
             break;
           case "signal":
             this.onSignal();
-
+            break;
+          case "prop":
+            this.onProp();
             break;
         }
         if (action != "click") {
@@ -171,6 +176,11 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
     this.signal.update((v) => v + 1);
   }
 
+  private onProp(): void {
+    console.log("onPorp");
+    this.prop = this.prop + 1;
+  }
+
   private getCdStatus(cdRef: ChangeDetectorRef): CdStatus {
     let lView = (cdRef as any)._lView;
 
@@ -188,6 +198,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
     } else if (consumer.dirty) {
       return "Consumer dirty";
     } else {
+      //console.log(flags);
       return null;
     }
   }

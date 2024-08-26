@@ -1,4 +1,13 @@
-import { AfterViewChecked, ChangeDetectionStrategy, Component, DoCheck, signal, viewChild } from "@angular/core";
+import {
+  AfterViewChecked,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DoCheck,
+  inject,
+  signal,
+  viewChild,
+} from "@angular/core";
 
 import { AbstractChangeDetectionComponent } from "../abstract-change-detection.component";
 
@@ -77,7 +86,9 @@ export class Comp_1_Component extends AbstractChangeDetectionComponent implement
   inputSignalAfterTimeout = signal(0);
 
   onTimeout() {
-    setTimeout(() => this.testSignal.set("Signal Updated After 3 seconds"), 3000);
+    setTimeout(() => {
+      this.testSignal.set("Signal Updated After 3 seconds");
+    }, 3000);
   }
 
   onInputSignalTimeout() {
@@ -85,7 +96,7 @@ export class Comp_1_Component extends AbstractChangeDetectionComponent implement
   }
 
   ngDoCheck(): void {
-    //console.log("Comp_1_Component_ngDoCheck");
+    console.log("Comp_1_Component_ngDoCheck");
   }
 
   ngAfterViewChecked(): void {
